@@ -1,0 +1,10 @@
+services:
+  mtproxy:
+    image: telegrammessenger/mtproxy:latest
+    container_name: mtproxy
+    restart: unless-stopped
+    ports:
+      - "${MTPROXY_PORT:-443}:443"
+    environment:
+      - SECRET=${MTPROXY_SECRET}
+      - WORKERS=${MTPROXY_WORKERS:-1}

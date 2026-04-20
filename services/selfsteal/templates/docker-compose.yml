@@ -1,0 +1,9 @@
+services:
+  selfsteal:
+    image: caddy:latest
+    container_name: selfsteal
+    restart: unless-stopped
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - /dev/shm:/dev/shm
+    network_mode: host

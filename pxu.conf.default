@@ -1,0 +1,15 @@
+# ProxyUltra (pxu.conf)
+# Global System Configuration
+# This file is typically stored at /etc/pxu/pxu.conf
+
+# Log Level: debug, info, warn, error, fatal
+PXU_LOG_LEVEL=info
+
+# Default Data Directory
+PXU_DATA_DIR=/opt/pxu/data
+
+# Reverse Proxy choice: caddy, nginx, or none
+PXU_REVERSE_PROXY=caddy
+
+# Default ACME email for SSL certs
+PXU_DEFAULT_EMAIL="admin@example.com"

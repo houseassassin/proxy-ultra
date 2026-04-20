@@ -1,0 +1,11 @@
+services:
+  remnanode:
+    image: ghcr.io/remnawave/node:latest
+    container_name: remnanode
+    restart: unless-stopped
+    network_mode: host
+    environment:
+      - REMNA_API_URL=${REMNA_API_URL}
+      - REMNA_NODE_KEY=${REMNA_NODE_KEY}
+    volumes:
+      - ./data:/app/data

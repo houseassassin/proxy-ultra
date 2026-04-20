@@ -1,0 +1,38 @@
+services:
+  db:
+    image: postgres:17.6
+    restart: unless-stopped
+    volumes:
+      - ./data/db:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-remnawave}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: remnawave
+
+  valkey:
+    image: valkey/valkey:9-alpine
+    restart: unless-stopped
+    command: valkey-server --requirepass ${REDIS_PASSWORD}
+    volumes:
+      - ./data/valkey:/data
+
+  backend:
+    image: remnawave/backend:latest
+    restart: unless-stopped
+    depends_on:
+      - db
+      - valkey
+    environment:
+      - DATABASE_URL=postgresql://${POSTGRES_USER:-remnawave}:${POSTGRES_PASSWORD}@db:5432/remnawave
+      - REDIS_URL=valkey://:${REDIS_PASSWORD}@valkey:6379/
+      - JWT_SECRET=${JWT_SECRET}
+    ports:
+      - "127.0.0.1:3000:3000"
+
+  subscription-page:
+    image: remnawave/subscription-page:latest
+    restart: unless-stopped
+    environment:
+      - BACKEND_URL=http://backend:3000
+    ports:
+      - "127.0.0.1:3001:3000"

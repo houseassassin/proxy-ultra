@@ -1,0 +1,9 @@
+services:
+  x-ui:
+    image: ghcr.io/mhsanaei/3x-ui:latest
+    container_name: 3x-ui
+    volumes:
+      - ./data/db/:/etc/x-ui/
+      - ./data/cert/:/root/cert/
+    restart: unless-stopped
+    network_mode: host

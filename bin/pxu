@@ -1,0 +1,46 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# ProxyUltra (pxu) Entrypoint
+# Dynamically determine the installation directory based on this script's location
+PXU_INSTALL_DIR="/opt/pxu"
+if [[ -d "${PWD}/core" ]]; then
+    PXU_INSTALL_DIR="${PWD}"
+fi
+
+echo -e "\033[1;36m====================================================\033[0m"
+echo -e "\033[1;36m    ProxyUltra Framework v1.0.0 by Houseassassin    \033[0m"
+echo -e "\033[1;36m====================================================\033[0m"
+
+source "${PXU_INSTALL_DIR}/core/01-bootstrap.sh"
+source "${PXU_INSTALL_DIR}/core/02-logger.sh"
+source "${PXU_INSTALL_DIR}/core/03-state.sh"
+source "${PXU_INSTALL_DIR}/core/04-engine.sh"
+
+# Load abstractions dynamically
+for lib_file in "${PXU_INSTALL_DIR}"/lib/lib_*.sh; do
+    if [[ -f "$lib_file" ]]; then
+        source "$lib_file"
+    fi
+done
+
+trap 'pxu_logger_fatal "Script interrupted. Cleaning up..."; exit 1' INT TERM
+
+action="${1:-menu}"
+service="${2:-}"
+if [ $# -ge 2 ]; then
+    shift 2
+elif [ $# -eq 1 ]; then
+    shift 1
+fi
+
+case "${action}" in
+  install)   pxu_engine_install "${service}" "$@" ;;
+  remove)    pxu_engine_remove "${service}" "$@" ;;
+  update)    pxu_engine_update "${service}" "$@" ;;
+  backup)    pxu_engine_backup "${service}" "$@" ;;
+  restore)   pxu_engine_restore "${service}" "$@" ;;
+  doctor)    pxu_engine_doctor "$@" ;;
+  menu)      source "${PXU_INSTALL_DIR}/ui/menu.sh" && ui_main_menu ;;
+  *)         pxu_logger_error "Unknown command: ${action}\neg: pxu install remnawave"; exit 1 ;;
+esac
