@@ -20,6 +20,7 @@ ui_main_menu() {
                      "8" "Install Marzban Panel" \
                      "9" "Install Cloudflare WARP SOCKS5" \
                      "a" "Install Telegram MTProxy Node" \
+                     "b" "Install 3DP-Manager (3x-ui GUI)" \
                      "f" "Install Fail2Ban (Anti-DDoS Shield)" \
                      "t" "Configure TG Alerts & Auto-Backups" \
                      "m" "Setup MTProto (TDL) for Huge Backups" \
@@ -69,6 +70,10 @@ ui_main_menu() {
             ;;
         a)
             pxu_engine_install "mtproxy"
+            ;;
+        b)
+            export PXU_DOMAIN=$(whiptail --inputbox "Enter a domain to proxy 3DP-Manager (optional):" 10 60 3>&1 1>&2 2>&3)
+            pxu_engine_install "3dpmanager"
             ;;
         f)
             pxu_engine_install "fail2ban"
