@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 # ProxyUltra (pxu) Entrypoint
 # Dynamically determine the installation directory based on this script's location
 PXU_INSTALL_DIR="/opt/pxu"
