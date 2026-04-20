@@ -21,7 +21,7 @@ if ! command -v git &> /dev/null; then
 fi
 
 # Define install directory
-INSTALL_DIR="/opt/proxy-ultra"
+INSTALL_DIR="/opt/pxu"
 
 if [ -d "$INSTALL_DIR" ]; then
     echo -e "${GREEN}[INFO] ProxyUltra already exists in $INSTALL_DIR. Updating...${NC}"
