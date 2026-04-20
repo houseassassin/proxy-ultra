@@ -12,8 +12,8 @@ svc_nginx_install() {
         pxu_logger_success "Nginx is already installed."
         return 0
     fi
-    sudo apt update >/dev/null 2>&1 || true
-    sudo apt install -y nginx >/dev/null 2>&1 || true
+    sudo apt-get update >/dev/null 2>&1 || true
+    sudo apt-get install -y nginx >/dev/null 2>&1 || true
 }
 
 svc_nginx_configure() {
@@ -30,13 +30,13 @@ svc_nginx_start() {
 
 svc_nginx_update() {
     pxu_logger_info "Updating Nginx via apt..."
-    sudo apt update >/dev/null 2>&1 || true
-    sudo apt install -y nginx >/dev/null 2>&1 || true
+    sudo apt-get update >/dev/null 2>&1 || true
+    sudo apt-get install -y nginx >/dev/null 2>&1 || true
 }
 
 svc_nginx_remove() {
     pxu_logger_warn "Removing Nginx..."
-    sudo apt remove -y nginx >/dev/null 2>&1 || true
+    sudo apt-get remove -y nginx >/dev/null 2>&1 || true
     pxu_state_save "nginx" "installed" "false"
 }
 

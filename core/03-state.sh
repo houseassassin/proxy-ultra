@@ -25,3 +25,6 @@ pxu_state_get() {
     local key=$2
     grep -sh "^${service}_${key}=" "$PXU_STATE_FILE" | cut -d'"' -f2 || true
 }
+
+pxu_state_init
+

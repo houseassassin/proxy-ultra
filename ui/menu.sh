@@ -20,8 +20,8 @@ pxu_ui_ask() {
     local prompt=$1
     local default=$2
     local result
-    echo -ne "\033[1;38;5;45m»\033[0m ${prompt} \033[38;5;240m[${default}]\033[0m: "
-    read -r result
+    echo -ne "\033[1;38;5;45m»\033[0m ${prompt} \033[38;5;240m[${default}]\033[0m: " >&2
+    read -r result < /dev/tty
     echo "${result:-$default}"
 }
 

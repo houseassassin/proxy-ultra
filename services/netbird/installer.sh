@@ -26,13 +26,13 @@ svc_netbird_start() {
 
 svc_netbird_update() {
     pxu_logger_info "Updating Netbird via package manager..."
-    sudo apt update >/dev/null && sudo apt install -y netbird >/dev/null || true
+    sudo apt-get update >/dev/null && sudo apt-get install -y netbird >/dev/null || true
 }
 
 svc_netbird_remove() {
     pxu_logger_warn "Removing Netbird..."
     netbird down >/dev/null 2>&1 || true
-    sudo apt remove -y netbird >/dev/null 2>&1 || true
+    sudo apt-get remove -y netbird >/dev/null 2>&1 || true
     pxu_state_save "netbird" "installed" "false"
 }
 

@@ -7,7 +7,7 @@ svc_fail2ban_preflight() {
 
 svc_fail2ban_install() {
     pxu_logger_info "Installing Fail2Ban..."
-    sudo apt update >/dev/null && sudo apt install -y fail2ban iptables >/dev/null || true
+    sudo apt-get update >/dev/null && sudo apt-get install -y fail2ban iptables >/dev/null || true
     
     local jail_conf="/etc/fail2ban/jail.d/pxu-docker.conf"
     sudo mkdir -p /etc/fail2ban/jail.d || true
@@ -43,7 +43,7 @@ svc_fail2ban_start() {
 
 svc_fail2ban_update() {
     pxu_logger_info "Updating fail2ban..."
-    sudo apt update >/dev/null && sudo apt install -y fail2ban >/dev/null || true
+    sudo apt-get update >/dev/null && sudo apt-get install -y fail2ban >/dev/null || true
 }
 
 svc_fail2ban_remove() {
@@ -51,7 +51,7 @@ svc_fail2ban_remove() {
     if command -v systemctl &>/dev/null; then
         sudo systemctl stop fail2ban >/dev/null 2>&1 || true
     fi
-    sudo apt remove -y fail2ban >/dev/null 2>&1 || true
+    sudo apt-get remove -y fail2ban >/dev/null 2>&1 || true
     sudo rm -f /etc/fail2ban/jail.d/pxu-docker.conf >/dev/null 2>&1 || true
     pxu_state_save "fail2ban" "installed" "false"
 }
