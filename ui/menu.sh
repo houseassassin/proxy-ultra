@@ -1,111 +1,136 @@
 #!/usr/bin/env bash
 # File: ui/menu.sh
 
+# UI Helpers
+pxu_ui_header() {
+    clear
+    echo -e "\033[1;38;5;45m╔══════════════════════════════════════════════════════════╗\033[0m"
+    echo -e "\033[1;38;5;45m║\033[0m   \033[1;38;5;15mProxyUltra CLI Framework - Developed by Houseassassin\033[0m \033[1;38;5;45m║\033[0m"
+    echo -e "\033[1;38;5;45m╚══════════════════════════════════════════════════════════╝\033[0m"
+    echo ""
+}
+
+pxu_ui_menu_item() {
+    local key=$1
+    local desc=$2
+    echo -e "  \033[1;38;5;45m[\033[1;38;5;15m${key}\033[1;38;5;45m]\033[0m ${desc}"
+}
+
+pxu_ui_ask() {
+    local prompt=$1
+    local default=$2
+    local result
+    echo -ne "\033[1;38;5;45m»\033[0m ${prompt} \033[38;5;240m[${default}]\033[0m: "
+    read -r result
+    echo "${result:-$default}"
+}
+
 ui_main_menu() {
-    if ! command -v whiptail &>/dev/null; then
-        pxu_logger_warn "whiptail is required for the interactive menu. Please install it (e.g. apt install whiptail)."
-        exit 1
-    fi
+    while true; do
+        pxu_ui_header
+        echo -e "\033[1;38;5;15mAvailable Components:\033[0m"
+        echo "────────────────────────────────────────────────────────────"
+        pxu_ui_menu_item "1" "Install Remnawave Panel"
+        pxu_ui_menu_item "2" "Install RemnaNode Bridge"
+        pxu_ui_menu_item "3" "Install 3x-ui Panel"
+        pxu_ui_menu_item "4" "Install Marzban Panel"
+        pxu_ui_menu_item "5" "Install 3DP-Manager (GUI for 3x-ui)"
+        echo "────────────────────────────────────────────────────────────"
+        pxu_ui_menu_item "w" "Install Wireguard VPN (wg-easy)"
+        pxu_ui_menu_item "n" "Install Netbird VPN Node"
+        pxu_ui_menu_item "s" "Install Selfsteal (Anti-DPI) Proxy"
+        pxu_ui_menu_item "p" "Install Telegram MTProxy Node"
+        pxu_ui_menu_item "c" "Install Cloudflare WARP SOCKS5"
+        echo "────────────────────────────────────────────────────────────"
+        pxu_ui_menu_item "f" "Enable Fail2Ban (Anti-DDoS Shield)"
+        pxu_ui_menu_item "b" "Enable TCP BBR Tuning"
+        pxu_ui_menu_item "t" "Configure Telegram Alerts & MTProto"
+        pxu_ui_menu_item "d" "System Diagnostics (Doctor)"
+        pxu_ui_menu_item "0" "Exit"
+        echo "────────────────────────────────────────────────────────────"
+        echo ""
+        
+        local choice
+        echo -ne "\033[1;38;5;45mSelect option »\033[0m "
+        read -r choice
 
-    local OPTION
-    OPTION=$(whiptail --title " ProxyUltra (pxu) by Houseassassin " \
-                     --menu "Select a framework component to deploy:" 20 70 11 \
-                     "1" "Install Remnawave Panel" \
-                     "2" "Install RemnaNode Bridge" \
-                     "3" "Install 3x-ui Panel" \
-                     "4" "Install Selfsteal (Anti-DPI) Proxy" \
-                     "5" "Install Netbird VPN Node" \
-                     "6" "Backup Remnawave Panel" \
-                     "7" "Install Wireguard VPN (wg-easy)" \
-                     "8" "Install Marzban Panel" \
-                     "9" "Install Cloudflare WARP SOCKS5" \
-                     "a" "Install Telegram MTProxy Node" \
-                     "b" "Install 3DP-Manager (3x-ui GUI)" \
-                     "f" "Install Fail2Ban (Anti-DDoS Shield)" \
-                     "t" "Configure TG Alerts & Auto-Backups" \
-                     "m" "Setup MTProto (TDL) for Huge Backups" \
-                     "d" "Run System Diagnostics (Doctor)" \
-                     "b" "Enable TCP BBR Tuning" \
-                     "0" "Exit" 3>&1 1>&2 2>&3)
-
-    local exit_status=$?
-    if [ $exit_status -ne 0 ]; then
-        pxu_logger_info "Process aborted."
-        return 0
-    fi
-
-    case $OPTION in
-        1)
-            export PXU_DOMAIN=$(whiptail --inputbox "Enter domain for Remnawave (or leave blank if IP-only):" 10 60 3>&1 1>&2 2>&3)
-            pxu_engine_install "remnawave"
-            ;;
-        2)
-            export PXU_REMNANODE_API_URL=$(whiptail --inputbox "Enter Remnawave API URL (e.g., http://x.x.x.x:3000):" 10 60 3>&1 1>&2 2>&3)
-            export PXU_REMNANODE_KEY=$(whiptail --inputbox "Enter RemnaNode Secret Key:" 10 60 3>&1 1>&2 2>&3)
-            pxu_engine_install "remnanode"
-            ;;
-        3)
-            pxu_engine_install "3x-ui"
-            ;;
-        4)
-            pxu_engine_install "selfsteal"
-            ;;
-        5)
-            export PXU_NETBIRD_SETUP_KEY=$(whiptail --inputbox "Enter Netbird Setup Key:" 10 60 3>&1 1>&2 2>&3)
-            pxu_engine_install "netbird"
-            ;;
-        6)
-            pxu_engine_backup "remnawave"
-            ;;
-        7)
-            export PXU_DOMAIN=$(whiptail --inputbox "Enter Domain/IP for Wireguard Endpoint:" 10 60 3>&1 1>&2 2>&3)
-            pxu_engine_install "wireguard"
-            ;;
-        8)
-            export PXU_DOMAIN=$(whiptail --inputbox "Enter domain for Marzban (or leave blank if IP-only):" 10 60 3>&1 1>&2 2>&3)
-            pxu_engine_install "marzban"
-            ;;
-        9)
-            pxu_engine_install "warp"
-            ;;
-        a)
-            pxu_engine_install "mtproxy"
-            ;;
-        b)
-            export PXU_DOMAIN=$(whiptail --inputbox "Enter a domain to proxy 3DP-Manager (optional):" 10 60 3>&1 1>&2 2>&3)
-            pxu_engine_install "3dpmanager"
-            ;;
-        f)
-            pxu_engine_install "fail2ban"
-            ;;
-        t)
-            local tg_token=$(whiptail --inputbox "Enter Telegram Bot Token (or leave blank to skip):" 10 60 3>&1 1>&2 2>&3)
-            local tg_chat=$(whiptail --inputbox "Enter Telegram Chat ID (or leave blank to skip):" 10 60 3>&1 1>&2 2>&3)
-            
-            if [[ -n "$tg_token" && -n "$tg_chat" ]]; then
-                pxu_state_save "core" "tg_token" "$tg_token"
-                pxu_state_save "core" "tg_chat_id" "$tg_chat"
-                export PXU_TG_TOKEN="$tg_token"
-                export PXU_TG_CHAT_ID="$tg_chat"
-                lib_telegram_send_msg "✅ ProxyUltra Telegram integration linked successfully!"
-                pxu_logger_success "Telegram Configured."
-            fi
-            
-            if whiptail --yesno "Enable Daily CRON Auto-Backup?" 10 60; then
-                pxu_engine_cron_backup
-            fi
-            ;;
-        m)
-            pxu_engine_setup_tdl
-            ;;
-        d)
-            pxu_engine_doctor
-            ;;
-        b)
-            lib_network_enable_bbr
-            ;;
-        0)
-            pxu_logger_info "Exited gracefully."
-            ;;
-    esac
+        case $choice in
+            1)
+                export PXU_DOMAIN=$(pxu_ui_ask "Enter domain for Remnawave (or IP)" "example.com")
+                pxu_engine_install "remnawave"
+                ;;
+            2)
+                export PXU_REMNANODE_API_URL=$(pxu_ui_ask "Enter Remnawave API URL" "http://x.x.x.x:3000")
+                export PXU_REMNANODE_KEY=$(pxu_ui_ask "Enter RemnaNode Secret Key" "secret")
+                pxu_engine_install "remnanode"
+                ;;
+            3)
+                pxu_engine_install "3x-ui"
+                ;;
+            4)
+                export PXU_DOMAIN=$(pxu_ui_ask "Enter domain for Marzban" "example.com")
+                pxu_engine_install "marzban"
+                ;;
+            5)
+                export PXU_DOMAIN=$(pxu_ui_ask "Enter domain for 3DP Manager (optional)" "")
+                pxu_engine_install "3dpmanager"
+                ;;
+            w)
+                export PXU_DOMAIN=$(pxu_ui_ask "Enter Domain/IP for Wireguard Endpoint" "$(curl -s https://api.ipify.org)")
+                pxu_engine_install "wireguard"
+                ;;
+            n)
+                export PXU_NETBIRD_SETUP_KEY=$(pxu_ui_ask "Enter Netbird Setup Key" "")
+                pxu_engine_install "netbird"
+                ;;
+            s)
+                pxu_engine_install "selfsteal"
+                ;;
+            p)
+                pxu_engine_install "mtproxy"
+                ;;
+            c)
+                pxu_engine_install "warp"
+                ;;
+            f)
+                pxu_engine_install "fail2ban"
+                ;;
+            b)
+                lib_network_enable_bbr
+                ;;
+            t)
+                local tg_token=$(pxu_ui_ask "Enter Telegram Bot Token" "")
+                local tg_chat=$(pxu_ui_ask "Enter Telegram Chat ID" "")
+                
+                if [[ -n "$tg_token" && -n "$tg_chat" ]]; then
+                    pxu_state_save "core" "tg_token" "$tg_token"
+                    pxu_state_save "core" "tg_chat_id" "$tg_chat"
+                    export PXU_TG_TOKEN="$tg_token"
+                    export PXU_TG_CHAT_ID="$tg_chat"
+                    lib_telegram_send_msg "✅ ProxyUltra CLI Telegram integration active!"
+                fi
+                
+                echo -ne "Enable Daily CRON Auto-Backup? (y/n): "
+                read -r cron_choice
+                if [[ "$cron_choice" == "y" ]]; then pxu_engine_cron_backup; fi
+                
+                echo -ne "Setup High-Speed MTProto (TDL)? (y/n): "
+                read -r tdl_choice
+                if [[ "$tdl_choice" == "y" ]]; then pxu_engine_setup_tdl; fi
+                ;;
+            d)
+                pxu_engine_doctor
+                ;;
+            0)
+                pxu_logger_info "Exiting ProxyUltra CLI. Goodbye!"
+                exit 0
+                ;;
+            *)
+                pxu_logger_error "Invalid option '$choice'"
+                sleep 1
+                ;;
+        esac
+        echo -ne "\nPress Enter to return to menu..."
+        read -r
+    done
 }

@@ -18,8 +18,7 @@ svc_3dpmanager_install() {
     local admin_pass=$(lib_crypto_generate_string 12)
     
     local final_port
-    final_port=$(whiptail --inputbox "Enter a port to bind 3DP Manager UI locally (Default: 8080):" 10 60 "8080" 3>&1 1>&2 2>&3)
-    if [[ -z "$final_port" ]]; then final_port=8080; fi
+    final_port=$(pxu_ui_ask "Enter a port to bind 3DP Manager UI locally" "8080")
     
     # Origins handling for CORS
     local domain=${PXU_DOMAIN:-$(curl -s https://api.ipify.org || echo "localhost")}

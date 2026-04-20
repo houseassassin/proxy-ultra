@@ -1,16 +1,17 @@
-#!/usr/bin/env bash
-set -euo pipefail
-
 # ProxyUltra (pxu) Entrypoint
 # Dynamically determine the installation directory based on this script's location
 PXU_INSTALL_DIR="/opt/pxu"
 if [[ -d "${PWD}/core" ]]; then
     PXU_INSTALL_DIR="${PWD}"
 fi
+export PXU_INSTALL_DIR
 
-echo -e "\033[1;36m====================================================\033[0m"
-echo -e "\033[1;36m    ProxyUltra Framework v1.0.0 by Houseassassin    \033[0m"
-echo -e "\033[1;36m====================================================\033[0m"
+# We don't use set -e here because interactive menu choices 
+# shouldn't kill the entire shell session on minor failures.
+
+echo -e "\033[1;38;5;45m╔══════════════════════════════════════════════════════════╗\033[0m"
+echo -e "\033[1;38;5;45m║\033[0m   \033[1;38;5;15mProxyUltra Framework v1.0.1 by Houseassassin\033[0m       \033[1;38;5;45m║\033[0m"
+echo -e "\033[1;38;5;45m╚══════════════════════════════════════════════════════════╝\033[0m"
 
 source "${PXU_INSTALL_DIR}/core/01-bootstrap.sh"
 source "${PXU_INSTALL_DIR}/core/02-logger.sh"

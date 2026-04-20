@@ -15,12 +15,11 @@ svc_mtproxy_install() {
     base_secret=$(openssl rand -hex 16)
     
     local proxy_port
-    proxy_port=$(whiptail --inputbox "Enter external port for MTProxy (Default: 443):" 10 60 "443" 3>&1 1>&2 2>&3)
-    if [[ -z "$proxy_port" ]]; then proxy_port=443; fi
+    proxy_port=$(pxu_ui_ask "Enter external port for MTProxy" "443")
     
     # By default, use fake-tls (ee) masking against a common domain to bypass DPI
     local domain_mask
-    domain_mask=$(whiptail --inputbox "Enter a domain for Fake-TLS masking to combat DPI (e.g. google.com):" 10 60 "google.com" 3>&1 1>&2 2>&3)
+    domain_mask=$(pxu_ui_ask "Enter a domain for Fake-TLS masking" "google.com")
     
     local final_secret="$base_secret"
     if [[ -n "$domain_mask" ]]; then
