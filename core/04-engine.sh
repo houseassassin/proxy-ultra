@@ -27,10 +27,11 @@ pxu_engine_install() {
     pxu_logger_info "Initiating installation sequence for [${service}]..."
     pxu_engine_load_module "${service}"
     
-    "svc_${service}_preflight"
-    "svc_${service}_install"
-    "svc_${service}_configure"
-    "svc_${service}_start"
+    local safe_svc="${service//-/}"
+    "svc_${safe_svc}_preflight"
+    "svc_${safe_svc}_install"
+    "svc_${safe_svc}_configure"
+    "svc_${safe_svc}_start"
     pxu_logger_success "Successfully installed ${service}!"
 }
 
@@ -44,7 +45,8 @@ pxu_engine_remove() {
     
     pxu_logger_warn "Initiating removal sequence for [${service}]..."
     pxu_engine_load_module "${service}"
-    "svc_${service}_remove"
+    local safe_svc="${service//-/}"
+    "svc_${safe_svc}_remove"
     pxu_logger_success "Successfully removed ${service}."
 }
 
@@ -52,7 +54,8 @@ pxu_engine_update() {
     local service=$1
     shift || true
     pxu_engine_load_module "${service}"
-    "svc_${service}_update"
+    local safe_svc="${service//-/}"
+    "svc_${safe_svc}_update"
 }
 
 pxu_engine_backup() {
@@ -63,12 +66,13 @@ pxu_engine_backup() {
     fi
     pxu_logger_info "Initiating backup sequence for [${service}]..."
     pxu_engine_load_module "${service}"
-    if declare -f "svc_${service}_backup" > /dev/null; then
-        "svc_${service}_backup"
+    local safe_svc="${service//-/}"
+    if declare -f "svc_${safe_svc}_backup" > /dev/null; then
+        "svc_${safe_svc}_backup"
         pxu_logger_success "Backup completed for ${service}."
         lib_telegram_send_msg "📦 ProxyUltra Backup successfully generated for \`${service}\` on \`$(hostname)\`"
     else
-        pxu_logger_warn "Service ${service} lacks svc_${service}_backup hook."
+        pxu_logger_warn "Service ${service} lacks svc_${safe_svc}_backup hook."
     fi
 }
 
@@ -80,11 +84,12 @@ pxu_engine_restore() {
     fi
     pxu_logger_info "Initiating restore sequence for [${service}]..."
     pxu_engine_load_module "${service}"
-    if declare -f "svc_${service}_restore" > /dev/null; then
-        "svc_${service}_restore"
+    local safe_svc="${service//-/}"
+    if declare -f "svc_${safe_svc}_restore" > /dev/null; then
+        "svc_${safe_svc}_restore"
         pxu_logger_success "Restore completed for ${service}."
     else
-        pxu_logger_warn "Service ${service} lacks svc_${service}_restore hook."
+        pxu_logger_warn "Service ${service} lacks svc_${safe_svc}_restore hook."
     fi
 }
 
@@ -130,10 +135,11 @@ pxu_engine_doctor() {
                 if [[ -f "${PXU_INSTALL_DIR}/services/${svc}/installer.sh" ]]; then
                      # shellcheck disable=SC1090
                      source "${PXU_INSTALL_DIR}/services/${svc}/installer.sh"
-                     if declare -f "svc_${svc}_doctor" > /dev/null; then
-                         "svc_${svc}_doctor"
+                     local safe_svc="${svc//-/}"
+                     if declare -f "svc_${safe_svc}_doctor" > /dev/null; then
+                         "svc_${safe_svc}_doctor"
                      else
-                         pxu_logger_warn "Service ${svc} lacks svc_${svc}_doctor hook."
+                         pxu_logger_warn "Service ${svc} lacks svc_${safe_svc}_doctor hook."
                      fi
                 else
                      pxu_logger_error "State mismatch: ${svc} registered but module missing."
